@@ -19,7 +19,8 @@ async function main(){
   //  instructions: "put in toaster", 
   //  image: "https://natashaskitchen.com/wp-content/uploads/2019/04/Best-Burger-4-500x375.jpg"})
   //  console.log(returns)
-   await updateRecipeByID("1", {title: "bread"})
+   //console.log(await updateRecipeByID("1", {title: "toast"}))
+   console.log(await deleteRecipeByID("1"))
 }
 main()
 // GET A RECIPE BY ID
@@ -53,6 +54,7 @@ async function updateRecipeByID(id, updatedRecipe) {
   let objValue = updatedRecipe[objKey1]
   let objKey = objKey1[0]
 
+
   let recipes = await getRecipes()
   for (let i = 0; i<recipes.length; i++) {
     if(id === recipes[i].id) {
@@ -67,15 +69,36 @@ async function updateRecipeByID(id, updatedRecipe) {
           recipes[i].instructions = objValue
           break
       }
+
       await fs.writeFile(filePath, JSON.stringify(recipes))
+      return recipes[i]
     }
   }
+
+  return null;
 
 }
 
 // DELETE A RECIPE BY ID
-async function deleteRecipeByID(id) {}
-console.log("hello")
+async function deleteRecipeByID(id) {
+  let recipes = await getRecipes()
+  let remainingRecipes = []
+  let deletedRecipe = ""
+  
+  for (let i = 0; i < recipes.length; i++){
+    if (recipes[i].id !== id){
+      
+        remainingRecipes.push(recipes[i])
+    }
+    else if (recipes[i].id === id){
+      deletedRecipe = recipes[i]
+    }
+  }
+ 
+  await fs.writeFile(filePath, JSON.stringify(remainingRecipes))
+  return deletedRecipe
+}
+
 module.exports = {
   getRecipes,
   getRecipeByID,
