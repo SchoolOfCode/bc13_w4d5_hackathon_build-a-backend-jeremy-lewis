@@ -12,7 +12,18 @@ async function getRecipes() {
 
 async function main(){
   // await getRecipes()
-  console.log(await getRecipeByID("4c848d48-b81e-4d6f-b45d-7b3090f4f8ef"))
+  //console.log(await getRecipeByID("4c848d48-b81e-4d6f-b45d-7b3090f4f8ef"))
+  let returns = await createRecipe({id: "1", 
+  title: "toast",
+   ingredients: "bread", 
+   instructions: "put in toaster", 
+   image: "https://natashaskitchen.com/wp-content/uploads/2019/04/Best-Burger-4-500x375.jpg"})
+   console.log(returns)
+  // id":
+    // title":
+    // ingredients":
+    // instructions":
+    // image":
 }
 main()
 // GET A RECIPE BY ID
@@ -30,7 +41,15 @@ async function getRecipeByID(id) {
 }
 
 // CREATE A RECIPE
-async function createRecipe(newRecipe) {}
+async function createRecipe(newRecipe) {
+  let recipes = await getRecipes()
+
+  recipes.push(newRecipe)
+  await fs.writeFile(filePath, JSON.stringify(recipes))
+
+  return newRecipe
+    
+}
 
 // UPDATE A RECIPE BY ID
 async function updateRecipeByID(id, updatedRecipe) {}
