@@ -1,5 +1,12 @@
 const express = require("express");
-const recipesRouter = express.Router();
+const router = express.Router();
 // Write your router code here!
 
-module.exports = recipesRouter;
+
+router.get('/', (req, res) => {
+    console.log("hello")
+    res.json("hello")
+})
+
+
+module.exports = router;
