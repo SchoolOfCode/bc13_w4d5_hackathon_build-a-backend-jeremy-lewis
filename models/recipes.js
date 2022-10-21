@@ -13,17 +13,13 @@ async function getRecipes() {
 async function main(){
   // await getRecipes()
   //console.log(await getRecipeByID("4c848d48-b81e-4d6f-b45d-7b3090f4f8ef"))
-  let returns = await createRecipe({id: "1", 
-  title: "toast",
-   ingredients: "bread", 
-   instructions: "put in toaster", 
-   image: "https://natashaskitchen.com/wp-content/uploads/2019/04/Best-Burger-4-500x375.jpg"})
-   console.log(returns)
-  // id":
-    // title":
-    // ingredients":
-    // instructions":
-    // image":
+  // let returns = await createRecipe({id: "1", 
+  // title: "toast",
+  //  ingredients: "bread", 
+  //  instructions: "put in toaster", 
+  //  image: "https://natashaskitchen.com/wp-content/uploads/2019/04/Best-Burger-4-500x375.jpg"})
+  //  console.log(returns)
+   await updateRecipeByID("1", {title: "bread"})
 }
 main()
 // GET A RECIPE BY ID
@@ -52,7 +48,30 @@ async function createRecipe(newRecipe) {
 }
 
 // UPDATE A RECIPE BY ID
-async function updateRecipeByID(id, updatedRecipe) {}
+async function updateRecipeByID(id, updatedRecipe) {
+  let objKey1 =  Object.keys(updatedRecipe)
+  let objValue = updatedRecipe[objKey1]
+  let objKey = objKey1[0]
+
+  let recipes = await getRecipes()
+  for (let i = 0; i<recipes.length; i++) {
+    if(id === recipes[i].id) {
+      switch(objKey) {
+        case "title":
+          recipes[i].title = objValue
+          break
+        case "ingredients":
+          recipes[i].ingredients = objValue
+          break
+        case "instructions":
+          recipes[i].instructions = objValue
+          break
+      }
+      await fs.writeFile(filePath, JSON.stringify(recipes))
+    }
+  }
+
+}
 
 // DELETE A RECIPE BY ID
 async function deleteRecipeByID(id) {}
