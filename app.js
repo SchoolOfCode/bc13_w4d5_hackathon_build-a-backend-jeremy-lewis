@@ -5,7 +5,7 @@ const recipesRouter = require('./routes/recipes.js')
 
 var morgan = require('morgan')
 
-app.use(morgan('dev'))
+app.use(morgan('tiny'))
 
 app.use(express.json());
 

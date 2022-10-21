@@ -61,8 +61,13 @@ function handleClick(event) {
 }
 
 async function getRecipes() {
+  console.log("hello")
   const response = await fetch(`${url}/api/recipes`);
-  const { payload } = await response.json();
+  console.log(response)
+  //const pays = await response.json()
+  //console.log(pays)
+  const payload = await response.json();
+  console.log(payload)
   recipesSection.innerHTML = "";
   console.log(payload);
   payload.forEach(renderRecipe);
@@ -104,4 +109,4 @@ function createIngredient(ingredient) {
   return li;
 }
 
-//getRecipes();
+getRecipes();

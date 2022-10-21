@@ -20,9 +20,9 @@ async function main(){
   //  image: "https://natashaskitchen.com/wp-content/uploads/2019/04/Best-Burger-4-500x375.jpg"})
   //  console.log(returns)
    //console.log(await updateRecipeByID("1", {title: "toast"}))
-   console.log(await deleteRecipeByID("1"))
+  // console.log(await deleteRecipeByID("1"))
 }
-main()
+//main()
 // GET A RECIPE BY ID
 async function getRecipeByID(id) {
   let recipes = await fs.readFile(filePath)
