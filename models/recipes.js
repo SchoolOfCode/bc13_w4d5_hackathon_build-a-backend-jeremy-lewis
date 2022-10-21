@@ -11,12 +11,23 @@ async function getRecipes() {
 }
 
 async function main(){
-  await getRecipes()
-
+  // await getRecipes()
+  console.log(await getRecipeByID("4c848d48-b81e-4d6f-b45d-7b3090f4f8ef"))
 }
 main()
 // GET A RECIPE BY ID
-async function getRecipeByID(id) {}
+async function getRecipeByID(id) {
+  let recipes = await fs.readFile(filePath)
+  let result = JSON.parse(recipes)
+  for(let i = 0; i<result.length; i++) {
+    if(id === result[i].id) {
+      let data = result[i]
+      return data
+    }
+  }
+  return null 
+
+}
 
 // CREATE A RECIPE
 async function createRecipe(newRecipe) {}
