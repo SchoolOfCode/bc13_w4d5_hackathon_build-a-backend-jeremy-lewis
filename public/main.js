@@ -8,7 +8,7 @@ const ingredientsInput = document.querySelector("#ingredients-input");
 const ingredientsList = document.querySelector("#ingredients-list");
 
 ingredientButton.addEventListener("click", addIngredient);
-submitButton.addEventListener("click", handleSubmit);
+submitButton.addEventListener("click", handleSubmit); // createRecipe()
 getRecipeButton.addEventListener("click", handleClick);
 
 function addIngredient(event) {
@@ -61,11 +61,7 @@ function handleClick(event) {
 }
 
 async function getRecipes() {
-  console.log("hello")
   const response = await fetch(`${url}/api/recipes`);
-  console.log(response)
-  //const pays = await response.json()
-  //console.log(pays)
   const payload = await response.json();
   console.log(payload)
   recipesSection.innerHTML = "";
@@ -109,4 +105,5 @@ function createIngredient(ingredient) {
   return li;
 }
 
-getRecipes();
+// getRecipes();
+createRecipe()
