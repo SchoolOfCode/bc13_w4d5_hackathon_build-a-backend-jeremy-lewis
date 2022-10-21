@@ -40,7 +40,8 @@ async function getRecipeByID(id) {
 // CREATE A RECIPE
 async function createRecipe(newRecipe) {
   let recipes = await getRecipes()
-
+  // let newId = uuidv4()
+  // newRecipe.id = newId
   recipes.push(newRecipe)
   await fs.writeFile(filePath, JSON.stringify(recipes))
 
