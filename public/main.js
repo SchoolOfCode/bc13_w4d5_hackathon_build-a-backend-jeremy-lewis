@@ -61,6 +61,7 @@ function handleClick(event) {
 }
 
 async function getRecipes() {
+ 
   const response = await fetch(`${url}/api/recipes`);
   const payload = await response.json();
   console.log(payload)
@@ -106,4 +107,4 @@ function createIngredient(ingredient) {
 }
 
 getRecipes();
-createRecipe()
+//createRecipe()

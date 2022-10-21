@@ -80,23 +80,27 @@ async function updateRecipeByID(id, updatedRecipe) {
 
 }
 
-// DELETE A RECIPE BY ID
+
 async function deleteRecipeByID(id) {
   let recipes = await getRecipes()
   let remainingRecipes = []
-  let deletedRecipe = ""
-  
+  let deletedRecipe
+
   for (let i = 0; i < recipes.length; i++){
+
     if (recipes[i].id !== id){
-      
+      console.log(recipes[i])
         remainingRecipes.push(recipes[i])
+    
     }
-    else if (recipes[i].id === id){
+
+    if (recipes[i].id === id){
       deletedRecipe = recipes[i]
+     
     }
   }
- 
-  await fs.writeFile(filePath, JSON.stringify(remainingRecipes))
+ console.log(remainingRecipes)
+  await fs.writeFile(filePath, JSON.stringify(recipes))
   return deletedRecipe
 }
 

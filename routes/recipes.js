@@ -65,14 +65,15 @@ recipesRouter.patch('/api/recipes/:id', async (req, res) => {
 
   recipesRouter.delete("/api/recipes/:id", async (req, res) => {
     let id = req.params.id
+    
     const deletedR = await deleteRecipeByID(id)
     // const response = {  
     //     success: true,  
     //     payload: deletedR
     //   }
     
-      console.log(deletedQ)
-      res.json(response)
+      console.log(deletedR)
+      res.send(deletedR)
 
   }) 
 
