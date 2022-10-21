@@ -52,5 +52,28 @@ recipesRouter.post('/api/recipes', async (req, res) => {
    
 })
 
+recipesRouter.patch('/api/recipes/:id', async (req, res) => {
+    let id = req.params.id
+    let newRecipes = req.body
+    console.log(newRecipes)
+  
+  
+    const result = await updateRecipeByID(id, newRecipes )
+    console.log(result)
+    res.json(result)
+  })
+
+  recipesRouter.delete("/api/recipes/:id", async (req, res) => {
+    let id = req.params.id
+    const deletedR = await deleteRecipeByID(id)
+    // const response = {  
+    //     success: true,  
+    //     payload: deletedR
+    //   }
+    
+      console.log(deletedQ)
+      res.json(response)
+
+  }) 
 
 module.exports = recipesRouter;
