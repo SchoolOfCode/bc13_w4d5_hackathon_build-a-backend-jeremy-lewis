@@ -5,45 +5,55 @@ const { receiveMessageOnPort } = require("node:worker_threads");
 const { v4: uuidv4 } = require("uuid");
 const filePath = path.resolve(process.cwd(), "data", "recipes.json");
 
-// GET ALL RECIPES
-async function getRecipes() {
-  let recipes = await fs.readFile(filePath)
-  let result = JSON.parse(recipes)
-  return result
-}
+
+// Test Data and a function to test all aync functions
 
 const myRecipe = {title: "apple pie",
      ingredients: ["flour", "sugar", "apple"],
-      instructions: "mixed all ingredients and put them in an oven for 40 minutes"}
+    instructions: "mixed all ingredients and put them in an oven for 40 minutes"
+    }
 
 async function main(){
       
   // console.log(await createRecipe(myRecipe))
-  // console.log(await getRecipeByID("cb9f1f27-6312-4a28-a6e0-c6487bd63eda"))
-  // console.log(await updateRecipeByID("1a095a20-4b4f-4b1a-8287-1d0cd4ff1788", {title: "creamed tea"}))
-  // console.log(await deleteRecipeByID("1a095a20-4b4f-4b1a-8287-1d0cd4ff1788"))
+  // console.log(await getRecipeByID("80ae09e0-194b-4223-aee8-ce3f869f6989"))
+  // console.log(await updateRecipeByID("6870866e-2421-41ff-a1c9-5e5b74217dd5", {title: "spicy apple pie"}))
+  console.log(await deleteRecipeByID("80ae09e0-194b-4223-aee8-ce3f869f6989"))
   // console.log(await getRecipes())
 }
 
 main()
 
+
+// GET ALL RECIPES
+async function getRecipes() {
+  const recipes = await fs.readFile(filePath)
+  const result = JSON.parse(recipes)
+  if(Array.isArray(result)) {
+    return result
+  }
+    return null
+}
+
+
 // GET A RECIPE BY ID
 async function getRecipeByID(id) {
-  const existingRecipes = await getRecipes()
-   
-  return existingRecipes.filter(recipe => recipe.id === id)[0]
-
+  const recipes = await getRecipes()
+  if(Array.isArray(recipes)) {
+    return recipes.filter(recipe => recipe.id === id)[0]
+  }
+  return null
 }
 
 // CREATE A RECIPE
 async function createRecipe(newRecipe) {
-  let recipes = await getRecipes()
-  let addedRecipe = {id: uuidv4(), ...newRecipe}
-  recipes.push(addedRecipe)
-  await fs.writeFile(filePath, JSON.stringify(recipes))
-
-  return addedRecipe
-    
+  const recipes = await getRecipes()
+  const addedRecipe = {id: uuidv4(), ...newRecipe}
+  if(Array.isArray(recipes)) {
+    recipes.push(addedRecipe)
+    await fs.writeFile(filePath, JSON.stringify(recipes))
+    return addedRecipe
+  }    
 }
 
 // UPDATE A RECIPE BY ID
@@ -68,14 +78,18 @@ async function updateRecipeByID(id, updatedRecipe) {
    
   return null
 }
-
-
+// Delete a recipe by id
 async function deleteRecipeByID(id) {
   const recipes = await getRecipes()
   const matchedRecipe = await getRecipeByID(id)
-  const newRecipes = recipes.filter(recipe => recipe.id !== id)
-  await fs.writeFile(filePath, JSON.stringify(newRecipes))
-  return   matchedRecipe
+  
+  if(matchedRecipe) {
+    const recipesRemained = recipes.filter(recipe => recipe.id !== id)
+    await fs.writeFile(filePath, JSON.stringify(recipesRemained))
+    return   matchedRecipe
+  } 
+  return null
+  
  
 }
 module.exports = {
