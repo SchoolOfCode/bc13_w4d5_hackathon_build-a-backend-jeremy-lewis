@@ -11,70 +11,71 @@ const {
 } = require("../models/recipes");
 
 
-recipesRouter.get("/", (req, res) => {
-  console.log("hi")
-    res.send("hi")
-})
+// recipesRouter.get("/", (req, res) => {
+//   console.log("hi")
+//     res.send("hi")
+// })
 
+//Retrieve all recipes
 recipesRouter.get('/api/recipes', async (req, res) => {
     
-    let response = await getRecipes()
-     res.json(response)
-})
-
-recipesRouter.get('/api/recipes/:id', async (req, res) => {
-
-    let id = req.params.id
-    let response = await getRecipeByID(id)
-    res.json(response)
-})
-
-recipesRouter.post('/api/recipes', async (req, res) => {
-
-    
-    let response = await getRecipes()
-    let title = req.body.title
-    let instructions = req.body.instructions
-    let ingredients = req.body.ingredients
-    let image = req.body.image
-    let returnObject = {
-        id: uuidv4(),
-        title: title,
-        ingredients: ingredients,
-        instructions: instructions,
-        image: image
+    const response = await getRecipes()
+    if(response) {
+      res.json({success: true, payload: response })
+    } else {
+      res.json({success: false})
     }
-    response.push(returnObject)
-    let reply = await createRecipe(response)
-    console.log(reply)
-    res.json(returnObject)
-
+    
    
 })
 
+//Retrieve a recipe by id
+recipesRouter.get('/api/recipes/:id', async (req, res) => {
+  const id = req.params.id
+  const response = await getRecipeByID(id)
+  if(response) {
+    res.json({success: true, payload: response })
+  } else {
+    res.json({success: false})
+  }
+    
+})
+//Post a new recipe
+recipesRouter.post('/api/recipes', async (req, res) => {
+    const newRecipes = req.body
+    const response = await createRecipe(newRecipes)
+    if(response) {
+      res.json({success: true, payload: response })
+    } else {
+      res.json({success: false})
+    } 
+  
+})
+
+//Update an existing recipe by id
 recipesRouter.patch('/api/recipes/:id', async (req, res) => {
-    let id = req.params.id
-    let newRecipes = req.body
-    console.log(newRecipes)
-  
-  
-    const result = await updateRecipeByID(id, newRecipes )
-    console.log(result)
-    res.json(result)
+    const id = req.params.id
+    const newRecipes = req.body
+    
+    const updatedRecipe = await updateRecipeByID(id, newRecipes)
+    if(updatedRecipe) {
+      res.json({success: true, payload: updatedRecipe})
+    } else {
+      res.json({success: false})
+    }   
   })
 
-  recipesRouter.delete("/api/recipes/:id", async (req, res) => {
-    let id = req.params.id
+  //Delet a recipe by id
+recipesRouter.delete("/api/recipes/:id", async (req, res) => {
+    const id = req.params.id
+    const response = await deleteRecipeByID(id)
+    if(response) {
+      res.json({success: true, payload: response })
+    } else {
+      res.json({success: false})
+    }
     
-    const deletedR = await deleteRecipeByID(id)
-    // const response = {  
-    //     success: true,  
-    //     payload: deletedR
-    //   }
     
-      console.log(deletedR)
-      res.send(deletedR)
-
   }) 
 
 module.exports = recipesRouter;

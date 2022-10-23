@@ -1,113 +1,101 @@
+const { match } = require("node:assert");
 const fs = require("node:fs/promises");
 const path = require("node:path");
+const { receiveMessageOnPort } = require("node:worker_threads");
 const { v4: uuidv4 } = require("uuid");
 const filePath = path.resolve(process.cwd(), "data", "recipes.json");
 
-// GET ALL RECIPES
-async function getRecipes() {
-  let recipes = await fs.readFile(filePath)
-  let result = JSON.parse(recipes)
-  return result
-}
+
+// Test Data and a function to test all aync functions
+
+const myRecipe = {title: "apple pie",
+     ingredients: ["flour", "sugar", "apple"],
+    instructions: "mixed all ingredients and put them in an oven for 40 minutes"
+    }
 
 async function main(){
-  // await getRecipes()
-  //console.log(await getRecipeByID("4c848d48-b81e-4d6f-b45d-7b3090f4f8ef"))
-  // let returns = await createRecipe({id: "1", 
-  // title: "toast",
-  //  ingredients: "bread", 
-  //  instructions: "put in toaster", 
-  //  image: "https://natashaskitchen.com/wp-content/uploads/2019/04/Best-Burger-4-500x375.jpg"})
-  //  console.log(returns)
-   //console.log(await updateRecipeByID("1", {title: "toast"}))
-  // console.log(await deleteRecipeByID("1"))
+      
+  // console.log(await createRecipe(myRecipe))
+  // console.log(await getRecipeByID("80ae09e0-194b-4223-aee8-ce3f869f6989"))
+  // console.log(await updateRecipeByID("6870866e-2421-41ff-a1c9-5e5b74217dd5", {title: "spicy apple pie"}))
+  console.log(await deleteRecipeByID("80ae09e0-194b-4223-aee8-ce3f869f6989"))
+  // console.log(await getRecipes())
 }
-//main()
+
+main()
+
+
+// GET ALL RECIPES
+async function getRecipes() {
+  const recipes = await fs.readFile(filePath)
+  const result = JSON.parse(recipes)
+  if(Array.isArray(result)) {
+    return result
+  }
+    return null
+}
+
+
 // GET A RECIPE BY ID
 async function getRecipeByID(id) {
-  let recipes = await fs.readFile(filePath)
-  let result = JSON.parse(recipes)
-  for(let i = 0; i<result.length; i++) {
-    if(id === result[i].id) {
-      let data = result[i]
-      return data
-    }
+  const recipes = await getRecipes()
+  if(Array.isArray(recipes)) {
+    return recipes.filter(recipe => recipe.id === id)[0]
   }
-  return null 
-
+  return null
 }
 
 // CREATE A RECIPE
 async function createRecipe(newRecipe) {
-  let recipes = await getRecipes()
-  // let newId = uuidv4()
-  // newRecipe.id = newId
-  recipes.push(newRecipe)
-  await fs.writeFile(filePath, JSON.stringify(recipes))
-
-  return newRecipe
-    
+  const recipes = await getRecipes()
+  const addedRecipe = {id: uuidv4(), ...newRecipe}
+  if(Array.isArray(recipes)) {
+    recipes.push(addedRecipe)
+    await fs.writeFile(filePath, JSON.stringify(recipes))
+    return addedRecipe
+  }    
 }
 
 // UPDATE A RECIPE BY ID
 async function updateRecipeByID(id, updatedRecipe) {
-  let objKey1 =  Object.keys(updatedRecipe)
-  let objValue = updatedRecipe[objKey1]
-  let objKey = objKey1[0]
+  const recipes = await getRecipes()
+  const matchedRecipe = await getRecipeByID(id)
+  const updatedRC = []
 
-
-  let recipes = await getRecipes()
-  for (let i = 0; i<recipes.length; i++) {
-    if(id === recipes[i].id) {
-      switch(objKey) {
-        case "title":
-          recipes[i].title = objValue
-          break
-        case "ingredients":
-          recipes[i].ingredients = objValue
-          break
-        case "instructions":
-          recipes[i].instructions = objValue
-          break
+  if(matchedRecipe) {
+    const newRecipes = recipes.map(recipe => {
+      if(recipe.id === id) {
+        updatedRC.push({...recipe, ...updatedRecipe}) //first destructure  the recipe that matched the id, 
+        //then destructure the updatedRecipe, the properties in the latter will overwrite that of the former
+        return {...recipe, ...updatedRecipe} 
+      } else {
+        return recipe
       }
-
-      await fs.writeFile(filePath, JSON.stringify(recipes))
-      return recipes[i]
-    }
-  }
-
-  return null;
-
+    })
+    await fs.writeFile(filePath, JSON.stringify(newRecipes))
+    return updatedRC[0]
+  } 
+   
+  return null
 }
-
-
+// Delete a recipe by id
 async function deleteRecipeByID(id) {
-  let recipes = await getRecipes()
-  let remainingRecipes = []
-  let deletedRecipe
-
-  for (let i = 0; i < recipes.length; i++){
-
-    if (recipes[i].id !== id){
-      console.log(recipes[i])
-        remainingRecipes.push(recipes[i])
-    
-    }
-
-    if (recipes[i].id === id){
-      deletedRecipe = recipes[i]
-     
-    }
-  }
- console.log(remainingRecipes)
-  await fs.writeFile(filePath, JSON.stringify(recipes))
-  return deletedRecipe
+  const recipes = await getRecipes()
+  const matchedRecipe = await getRecipeByID(id)
+  
+  if(matchedRecipe) {
+    const recipesRemained = recipes.filter(recipe => recipe.id !== id)
+    await fs.writeFile(filePath, JSON.stringify(recipesRemained))
+    return   matchedRecipe
+  } 
+  return null
+  
+ 
 }
-
 module.exports = {
   getRecipes,
   getRecipeByID,
   createRecipe,
   updateRecipeByID,
   deleteRecipeByID,
-};
+}
