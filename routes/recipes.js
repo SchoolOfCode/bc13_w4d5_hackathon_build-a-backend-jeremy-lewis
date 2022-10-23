@@ -18,8 +18,10 @@ recipesRouter.get("/", (req, res) => {
 
 recipesRouter.get('/api/recipes', async (req, res) => {
     
-    let response = await getRecipes()
-     res.json(response)
+    const response = await getRecipes()
+    
+    const data = {success: true, payload: response }
+     res.json(data)
 })
 
 recipesRouter.get('/api/recipes/:id', async (req, res) => {
@@ -30,51 +32,29 @@ recipesRouter.get('/api/recipes/:id', async (req, res) => {
 })
 
 recipesRouter.post('/api/recipes', async (req, res) => {
-
-    
-    let response = await getRecipes()
-    let title = req.body.title
-    let instructions = req.body.instructions
-    let ingredients = req.body.ingredients
-    let image = req.body.image
-    let returnObject = {
-        id: uuidv4(),
-        title: title,
-        ingredients: ingredients,
-        instructions: instructions,
-        image: image
-    }
-    response.push(returnObject)
-    let reply = await createRecipe(response)
-    console.log(reply)
-    res.json(returnObject)
-
-   
+    const newRecipes = req.body
+    const response = await createRecipe(newRecipes)
+    const data = {success: true, payload: response }
+    res.json(data)
+  
 })
 
 recipesRouter.patch('/api/recipes/:id', async (req, res) => {
-    let id = req.params.id
-    let newRecipes = req.body
-    console.log(newRecipes)
-  
-  
-    const result = await updateRecipeByID(id, newRecipes )
-    console.log(result)
-    res.json(result)
+    const id = req.params.id
+    const newRecipes = req.body
+    
+    const response = await updateRecipeByID(id, newRecipes)
+    const data = {success: true, payload: response }
+    res.json(data)
   })
 
   recipesRouter.delete("/api/recipes/:id", async (req, res) => {
     let id = req.params.id
     
-    const deletedR = await deleteRecipeByID(id)
-    // const response = {  
-    //     success: true,  
-    //     payload: deletedR
-    //   }
+    const response = await deleteRecipeByID(id)
+    const data = {success: true, payload: response }
+    res.json(data)
     
-      console.log(deletedR)
-      res.send(deletedR)
-
   }) 
 
 module.exports = recipesRouter;
