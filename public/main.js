@@ -8,7 +8,7 @@ const ingredientsInput = document.querySelector("#ingredients-input");
 const ingredientsList = document.querySelector("#ingredients-list");
 
 ingredientButton.addEventListener("click", addIngredient);
-submitButton.addEventListener("click", handleSubmit);
+submitButton.addEventListener("click", handleSubmit); // createRecipe()
 getRecipeButton.addEventListener("click", handleClick);
 
 function addIngredient(event) {
@@ -61,10 +61,13 @@ function handleClick(event) {
 }
 
 async function getRecipes() {
+ 
   const response = await fetch(`${url}/api/recipes`);
-  const { payload } = await response.json();
+  const data = await response.json();
+  const payload = data.payload
+  console.log(payload)
   recipesSection.innerHTML = "";
-  console.log(payload);
+  
   payload.forEach(renderRecipe);
 }
 
@@ -73,7 +76,7 @@ function renderRecipe(recipe) {
   recipesSection.appendChild(article);
 }
 
-function createRecipeView({ title, ingredients, instructions, image }) {
+function createRecipeView({ title, ingredients, instructions, image}) {
   const article = document.createElement("article");
   const h2 = document.createElement("h2");
   h2.innerText = title;
@@ -104,4 +107,5 @@ function createIngredient(ingredient) {
   return li;
 }
 
-getRecipes();
+// getRecipes();
+// createRecipe()
